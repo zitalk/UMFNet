@@ -1,68 +1,74 @@
-# Uncertainty-Aware Modality Fusion for Unaligned RGB-T Salient Object Detection
+<div align="center">
+  <h1>UMFNet</h1>
+</div>
 
-**CVPR 2026**
+<div align="center">
+<h4>[CVPR 2026] Uncertainty-Aware Modality Fusion for Unaligned RGB-T Salient Object Detection</h4>
+</div>
 
-> Official PyTorch implementation of **UMFNet**, a novel framework for RGB-T salient object detection that explicitly models per-modality uncertainty to handle spatial misalignment between visible and thermal image pairs.
+<div align="center">
+<h6>🌟 If this work is useful to you, please give this repository a Star! 🌟</h6>
+</div>
 
----
+<div align="center">
+  <a href="https://www.apache.org/licenses/"><img src="https://img.shields.io/badge/License-Apache%202.0-yellow" alt="License" style="height:20px;"></a>
+</div>
 
-## Overview
+## 🛠️ Method Overview
 
-RGB-T salient object detection (SOD) typically assumes well-aligned image pairs. In practice, however, visible and thermal cameras have different fields of view and optics, resulting in **unaligned modality pairs** that degrade fusion quality. UMFNet addresses this by treating each modality's feature representation as a **Gaussian random variable**: uncertain (misaligned) regions produce high variance, which is then used to suppress unreliable cross-modal influence during fusion.
+<p align="center">
+    <img src="./fig/overview.png" alt="Overview" />
+</p>
 
-### Key Components
+RGB-T salient object detection (SOD) typically assumes well-aligned image pairs. In practice, visible and thermal cameras have different fields of view and optics, resulting in **unaligned modality pairs** that severely degrade fusion quality. We propose **UMFNet**, which explicitly models per-modality uncertainty to handle spatial misalignment. Each modality's features are treated as a **Gaussian random variable**: uncertain (misaligned) regions produce high variance, which is then used to suppress unreliable cross-modal influence during fusion.
+
+Specifically, we introduce an **U**ncertainty-**A**ware **M**odule (**UAM**) that encodes RGB and thermal features as stochastic latent codes via reparameterization, and a **C**onfidence-**G**uided **M**odulation module (**CGM**) that converts uncertainty estimates into spatial confidence weights for selective cross-modal injection. Built on a dual Swin-B backbone with a progressive decoder, UMFNet achieves robust salient object detection under real-world unaligned conditions.
 
 | Module | Role |
 |--------|------|
-| **UAM** — Uncertainty-Aware Module | Models each modality as a Gaussian distribution via a reparameterization head; predicts per-spatial-location mean and log-variance; applies KL regularization toward a standard normal prior |
-| **CGM** — Confidence-Guided Modulation | Converts uncertainty estimates into confidence weights; uses channel-wise affine modulation (γ, β) and spatial gating to selectively inject thermal cues into the RGB stream |
-| **Dual Swin-B Backbone** | Independent Swin Transformer encoders for RGB and thermal streams; features extracted at 4 scales (1/4 → 1/32) |
-| **Progressive Decoder** | Skip-connection upsampling decoder with deep supervision at all 4 scales; each scale predicts both a saliency map and a boundary map |
+| **UAM** — Uncertainty-Aware Module | Models each modality as a Gaussian; predicts per-location mean & log-variance; KL-regularized toward standard normal |
+| **CGM** — Confidence-Guided Modulation | Derives confidence maps from log-variances; applies channel-wise affine modulation (γ, β) and spatial gating |
+| **Dual Swin-B Backbone** | Independent Swin Transformer encoders for RGB and thermal at 4 scales |
+| **Progressive Decoder** | Skip-connection upsampling with deep supervision; predicts saliency & boundary maps at each scale |
 
-### Architecture
+## 🕹️ Getting Started
 
+#### Environment Setup
+
+```bash
+conda create -n UMFNet python=3.10 -y
+conda activate UMFNet
+pip install torch torchvision timm
+pip install numpy opencv-python Pillow tqdm py-sod-metrics
 ```
-RGB  ──► Swin-B Encoder ──► Fv_1..4 ─┐
-                                       ├─ UAM + CGM (×4 scales) ──► Fused_1..4 ──► Decoder ──► Sal / Boundary
-T    ──► Swin-B Encoder ──► Ft_1..4 ─┘
-```
 
-**UAM** encodes each scale's RGB/thermal features into stochastic latent codes, estimates a cross-modal joint distribution, and returns a calibrated thermal signal `F_t_tilde` alongside KL divergence losses.  
-**CGM** computes a scalar confidence map from both modalities' log-variances and applies it to spatial-channel fusion, ensuring that uncertain thermal regions contribute less to the final representation.
-
----
-
-## Requirements
+Or install all dependencies at once:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Dependencies: `torch`, `torchvision`, `timm`, `numpy`, `opencv-python`, `Pillow`, `tqdm`, `py-sod-metrics`.
+#### Dataset Preparation
 
----
-
-## Datasets
-
-| Split | Dataset | Description |
-|-------|---------|-------------|
-| Unaligned test | **UVT20K** | Large-scale unaligned RGB-T pairs |
-| Unaligned test | **UVT2000** | Unaligned RGB-T benchmark |
-| Weakly aligned | **U-VT5000 / U-VT1000 / U-VT821** | Weakly aligned variants of classic benchmarks |
-| Aligned (reference) | **VT5000 / VT1000 / VT821** | Standard aligned RGB-T SOD benchmarks |
-
-Set the following environment variables before running:
+Set the following environment variables to point to your dataset roots:
 
 ```bash
-export UMFNET_SOD_ROOT=/path/to/unaligned_datasets   # UVT20K, UVT2000, WeaklyAligned/
+export UMFNET_SOD_ROOT=/path/to/unaligned_datasets    # UVT20K, UVT2000, WeaklyAligned/
 export UMFNET_RGBTSOD_ROOT=/path/to/aligned_datasets  # VT5000, VT1000, VT821
 ```
 
----
+Supported datasets:
 
-## Training
+| Split | Dataset | Description |
+|-------|---------|-------------|
+| Unaligned | **UVT20K** | Large-scale unaligned RGB-T pairs |
+| Unaligned | **UVT2000** | Unaligned RGB-T benchmark |
+| Weakly aligned | **U-VT5000 / U-VT1000 / U-VT821** | Weakly aligned variants of classic benchmarks |
+| Aligned (reference) | **VT5000 / VT1000 / VT821** | Standard aligned RGB-T SOD benchmarks |
 
-**Using the provided script:**
+#### Training
+
+Download a pretrained [Swin-B](https://github.com/microsoft/Swin-Transformer) checkpoint, then run:
 
 ```bash
 export UMFNET_PRETRAIN=/path/to/swin_base_patch4_window12_384_22k.pth
@@ -73,7 +79,7 @@ export UMFNET_TEST_GT_ROOT=/path/to/test/GT/
 bash run_umfnet_train.sh
 ```
 
-**Key hyperparameters** (configurable via `options.py`):
+Key hyperparameters (configurable via `options.py`):
 
 | Argument | Default | Description |
 |----------|---------|-------------|
@@ -83,13 +89,10 @@ bash run_umfnet_train.sh
 | `--trainsize` | 384 | Input resolution |
 | `--lr_sched` | cosine | LR schedule (`cosine` / `step`) |
 | `--warmup_epochs` | 5 | Linear LR warm-up epochs |
-| `--load_pre` | — | Path to pretrained Swin-B checkpoint |
 
 Checkpoints and logs are saved to `./Results/Result_UMFNet/` by default.
 
----
-
-## Evaluation
+#### Evaluation
 
 ```bash
 python UMFNet_test.py \
@@ -99,23 +102,23 @@ python UMFNet_test.py \
     --save_root ./test_maps
 ```
 
-Metrics reported: **S-measure (Sm)**, **E-measure (Em)**, **Weighted F-measure (Fw)**. Results are written to `metrics_summary.json` under the output directory.
+Metrics reported: **S-measure (Sm)**, **E-measure (Em)**, **Weighted F-measure (Fw)**. A `metrics_summary.json` is written to the output directory.
 
----
+## 🔭 Visualization
 
-## Model Zoo
+<p align="center">
+    <img src="./fig/visual.png" alt="Visualization" />
+</p>
+
+## 📦 Model Zoo
 
 | Checkpoint | Backbone | UVT20K Sm | UVT2000 Sm |
 |------------|----------|-----------|------------|
 | Coming soon | Swin-B | — | — |
 
-Pretrained Swin-B weights: [Swin Transformer Model Zoo](https://github.com/microsoft/Swin-Transformer)
+## 🤝 Citation
 
----
-
-## Citation
-
-If you find this work useful, please cite:
+Please cite our work if it is useful for your research.
 
 ```bibtex
 @inproceedings{umfnet2026,
@@ -125,8 +128,13 @@ If you find this work useful, please cite:
 }
 ```
 
----
+## 🗓️ TODO
 
-## License
+- [🟢 Complete] **Open source code at this repository**
+- [🟢 Complete] **Add method overview and visualization in README**
+- [⬜ Pending] **arXiv preprint release**
+- [⬜ Pending] **Release pretrained checkpoints**
 
-This repository is released for research purposes only.
+## 🏷️ License
+
+This project is released under the [Apache 2.0](https://www.apache.org/licenses/) license.
