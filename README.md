@@ -20,14 +20,12 @@
     <img src="./fig/overview.png" alt="Overview" />
 </p>
 
-RGB-T salient object detection (SOD) typically assumes well-aligned image pairs. In practice, visible and thermal cameras have different fields of view and optics, resulting in **unaligned modality pairs** that severely degrade fusion quality. We propose **UMFNet**, which explicitly models per-modality uncertainty to handle spatial misalignment. Each modality's features are treated as a **Gaussian random variable**: uncertain (misaligned) regions produce high variance, which is then used to suppress unreliable cross-modal influence during fusion.
-
-Specifically, we introduce an **U**ncertainty-**A**ware **M**odule (**UAM**) that encodes RGB and thermal features as stochastic latent codes via reparameterization, and a **C**onfidence-**G**uided **M**odulation module (**CGM**) that converts uncertainty estimates into spatial confidence weights for selective cross-modal injection. Built on a dual Swin-B backbone with a progressive decoder, UMFNet achieves robust salient object detection under real-world unaligned conditions.
+RGB-T salient object detection (SOD) typically assumes well-aligned image pairs. In practice, visible and thermal cameras have different fields of view and optics, resulting in **unaligned modality pairs** that severely degrade fusion quality. We propose **UMFNet**, which explicitly models per-modality uncertainty to handle spatial misalignment. Each modality's features are treated as a **Gaussian random variable**: uncertain (misaligned) regions produce high variance, which is then used to suppress unreliable cross-modal influence during fusion. Specifically, we introduce an **U**ncertainty-**A**ware **M**odule (**UAM**) that encodes RGB and thermal features as stochastic latent codes via reparameterization, and a **C**onfidence-**G**uided **M**odulation module (**CGM**) that converts uncertainty estimates into spatial confidence weights for selective cross-modal injection. Built on a dual Swin-B backbone with a progressive decoder, UMFNet achieves robust salient object detection under real-world unaligned conditions.
 
 | Module | Role |
 |--------|------|
-| **UAM** — Uncertainty-Aware Module | Models each modality as a Gaussian; predicts per-location mean & log-variance; KL-regularized toward standard normal |
-| **CGM** — Confidence-Guided Modulation | Derives confidence maps from log-variances; applies channel-wise affine modulation (γ, β) and spatial gating |
+| **Uncertainty-Aware Module** (UAM) | Models each modality as a Gaussian; predicts per-location mean & log-variance; KL-regularized toward standard normal |
+| **Confidence-Guided Modulation** (CGM) | Derives confidence maps from log-variances; applies channel-wise affine modulation (γ, β) and spatial gating |
 | **Dual Swin-B Backbone** | Independent Swin Transformer encoders for RGB and thermal at 4 scales |
 | **Progressive Decoder** | Skip-connection upsampling with deep supervision; predicts saliency & boundary maps at each scale |
 
@@ -110,11 +108,7 @@ Metrics reported: **S-measure (Sm)**, **E-measure (Em)**, **Weighted F-measure (
     <img src="./fig/visual.png" alt="Visualization" />
 </p>
 
-## 📦 Model Zoo
 
-| Checkpoint | Backbone | UVT20K Sm | UVT2000 Sm |
-|------------|----------|-----------|------------|
-| Coming soon | Swin-B | — | — |
 
 ## 🤝 Citation
 
@@ -127,13 +121,6 @@ Please cite our work if it is useful for your research.
   year      = {2026},
 }
 ```
-
-## 🗓️ TODO
-
-- [🟢 Complete] **Open source code at this repository**
-- [🟢 Complete] **Add method overview and visualization in README**
-- [⬜ Pending] **arXiv preprint release**
-- [⬜ Pending] **Release pretrained checkpoints**
 
 ## 🏷️ License
 
