@@ -1,0 +1,8 @@
+numpy
+opencv-python
+Pillow
+py-sod-metrics
+timm
+torch
+torchvision
+tqdm
