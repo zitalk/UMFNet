@@ -72,20 +72,8 @@ def _train_all_specs():
     return [
         ('UVT20K', _join_env_dir('UMFNET_SOD_ROOT', 'UVT20K', 'Train', 'RGB'), _join_env_dir('UMFNET_SOD_ROOT', 'UVT20K', 'Train', 'GT'), _join_env_dir('UMFNET_SOD_ROOT', 'UVT20K', 'Train', 'T'), _join_env_dir('UMFNET_SOD_ROOT', 'UVT20K', 'Train', 'GT'), None),
         ('UNVT5000', _join_env_dir('UMFNET_SOD_ROOT', 'WeaklyAligned', 'VT5000-Train_unalign', 'RGB'), _join_env_dir('UMFNET_SOD_ROOT', 'WeaklyAligned', 'VT5000-Train_unalign', 'GT'), _join_env_dir('UMFNET_SOD_ROOT', 'WeaklyAligned', 'VT5000-Train_unalign', 'T'), _join_env_dir('UMFNET_SOD_ROOT', 'WeaklyAligned', 'VT5000-Train_unalign', 'GT'), None),
-        ('VT5000', _join_env_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Train', 'RGB'), _join_env_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Train', 'GT'), _join_env_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Train', 'T'), _join_env_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Train', 'GT'), None),
     ]
 
-
-def _train_rgbt_specs():
-    return [
-        ('VT5000', _join_env_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Train', 'RGB'), _join_env_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Train', 'GT'), _join_env_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Train', 'T'), _join_env_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Train', 'GT'), None),
-    ]
-
-
-def _train_lightfield_specs():
-    return [
-        ('DUTLFV2', _require_env_dir('UMFNET_DUTLF_RGB_ROOT'), _require_env_dir('UMFNET_DUTLF_GT_ROOT'), _require_env_dir('UMFNET_DUTLF_DEPTH_ROOT'), _require_env_dir('UMFNET_DUTLF_GT_ROOT'), None),
-    ]
 
 
 def mask_to_boundary_pil(mask_img: Image.Image, width: int = 3, mode: str = 'inner', out_mode: str = 'L') -> Image.Image:
@@ -246,10 +234,6 @@ class SalObjDataset(data.Dataset):
     def _build_samples(self, image_root, gt_root, depth_root):
         if image_root == 'all':
             datasets = _train_all_specs()
-        elif image_root == 'RGBT':
-            datasets = _train_rgbt_specs()
-        elif image_root == 'LightField':
-            datasets = _train_lightfield_specs()
         else:
             if not image_root or not gt_root or not depth_root:
                 raise ValueError('Custom training requires image_root, gt_root, and depth_root.')
