@@ -50,7 +50,6 @@ Set the following environment variables to point to your dataset roots:
 
 ```bash
 export UMFNET_SOD_ROOT=/path/to/unaligned_datasets    # UVT20K, UVT2000, WeaklyAligned/
-export UMFNET_RGBTSOD_ROOT=/path/to/aligned_datasets  # VT5000, VT1000, VT821
 ```
 
 Supported datasets:
@@ -60,7 +59,7 @@ Supported datasets:
 | Unaligned | **UVT20K** | Large-scale unaligned RGB-T pairs |
 | Unaligned | **UVT2000** | Unaligned RGB-T benchmark |
 | Weakly aligned | **U-VT5000 / U-VT1000 / U-VT821** | Weakly aligned variants of classic benchmarks |
-| Aligned (reference) | **VT5000 / VT1000 / VT821** | Standard aligned RGB-T SOD benchmarks |
+
 
 #### Training
 
