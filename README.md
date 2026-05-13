@@ -11,6 +11,10 @@
 </div>
 
 <div align="center">
+<h6>🌟 A refactored codebase is available, featuring a cleaner and lighter implementation, easier usage, and improved performance. 🌟</h6>
+</div>
+
+<div align="center">
   <a href="https://www.apache.org/licenses/"><img src="https://img.shields.io/badge/License-Apache%202.0-yellow" alt="License" style="height:20px;"></a>
 </div>
 
@@ -22,12 +26,6 @@
 
 RGB-T salient object detection (SOD) typically assumes well-aligned image pairs. In practice, visible and thermal cameras have different fields of view and optics, resulting in **unaligned modality pairs** that severely degrade fusion quality. We propose **UMFNet**, which explicitly models per-modality uncertainty to handle spatial misalignment. Each modality's features are treated as a **Gaussian random variable**: uncertain (misaligned) regions produce high variance, which is then used to suppress unreliable cross-modal influence during fusion. Specifically, we introduce an **U**ncertainty-**A**ware **M**odule (**UAM**) that encodes RGB and thermal features as stochastic latent codes via reparameterization, and a **C**onfidence-**G**uided **M**odulation module (**CGM**) that converts uncertainty estimates into spatial confidence weights for selective cross-modal injection. Built on a dual Swin-B backbone with a progressive decoder, UMFNet achieves robust salient object detection under real-world unaligned conditions.
 
-| Module | Role |
-|--------|------|
-| **Uncertainty-Aware Module** (UAM) | Models each modality as a Gaussian; predicts per-location mean & log-variance; KL-regularized toward standard normal |
-| **Confidence-Guided Modulation** (CGM) | Derives confidence maps from log-variances; applies channel-wise affine modulation (γ, β) and spatial gating |
-| **Dual Swin-B Backbone** | Independent Swin Transformer encoders for RGB and thermal at 4 scales |
-| **Progressive Decoder** | Skip-connection upsampling with deep supervision; predicts saliency & boundary maps at each scale |
 
 ## 🕹️ Getting Started
 
@@ -77,18 +75,6 @@ export UMFNET_TEST_GT_ROOT=/path/to/test/GT/
 bash run_umfnet_train.sh
 ```
 
-Key hyperparameters (configurable via `options.py`):
-
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--epoch` | 100 | Total training epochs |
-| `--lr` | 5e-5 | Peak learning rate |
-| `--batchsize` | 8 | Batch size |
-| `--trainsize` | 384 | Input resolution |
-| `--lr_sched` | cosine | LR schedule (`cosine` / `step`) |
-| `--warmup_epochs` | 5 | Linear LR warm-up epochs |
-
-Checkpoints and logs are saved to `./Results/Result_UMFNet/` by default.
 
 #### Evaluation
 
@@ -101,12 +87,6 @@ python UMFNet_test.py \
 ```
 
 Metrics reported: **S-measure (Sm)**, **E-measure (Em)**, **Weighted F-measure (Fw)**. A `metrics_summary.json` is written to the output directory.
-
-## 🔭 Visualization
-
-<p align="center">
-    <img src="./fig/visual.png" alt="Visualization" />
-</p>
 
 
 
