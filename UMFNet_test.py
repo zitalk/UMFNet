@@ -56,24 +56,6 @@ def resolve_dataset_roots(dataset: str):
             _join_dir('UMFNET_SOD_ROOT', 'WeaklyAligned', 'VT821_unalign', 'GT'),
             _join_dir('UMFNET_SOD_ROOT', 'WeaklyAligned', 'VT821_unalign', 'T'),
         )
-    if dataset == 'VT5000':
-        return (
-            _join_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Test', 'RGB'),
-            _join_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Test', 'GT'),
-            _join_dir('UMFNET_RGBTSOD_ROOT', 'VT5000', 'Test', 'T'),
-        )
-    if dataset == 'VT821':
-        return (
-            _join_dir('UMFNET_RGBTSOD_ROOT', 'VT821', 'RGB'),
-            _join_dir('UMFNET_RGBTSOD_ROOT', 'VT821', 'GT'),
-            _join_dir('UMFNET_RGBTSOD_ROOT', 'VT821', 'T'),
-        )
-    if dataset == 'VT1000':
-        return (
-            _join_dir('UMFNET_RGBTSOD_ROOT', 'VT1000', 'RGB'),
-            _join_dir('UMFNET_RGBTSOD_ROOT', 'VT1000', 'GT'),
-            _join_dir('UMFNET_RGBTSOD_ROOT', 'VT1000', 'T'),
-        )
     raise NotImplementedError(f'No dataset named {dataset}')
 
 
